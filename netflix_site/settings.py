@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5+n$*!xo2dz68e3ek&_8-x(q35&4@k87vgnwngm7ww05%g3-w@'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,16 +87,22 @@ WSGI_APPLICATION = 'netflix_site.wsgi.application'
 #     }
 # }
 
+# Replace the DATABASES section of your settings.py with this
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'name',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'host',
-        'PORT': '5432',
-    }
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': getenv('PGDATABASE'),
+    'USER': getenv('PGUSER'),
+    'PASSWORD': getenv('PGPASSWORD'),
+    'HOST': getenv('PGHOST'),
+    'PORT': getenv('PGPORT', 5432),
+    'OPTIONS': {
+      'sslmode': 'require',
+    },
+    'DISABLE_SERVER_SIDE_CURSORS': True,
+  }
 }
+
 
 
 # Password validation
